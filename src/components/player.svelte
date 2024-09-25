@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from "svelte";
+
     let playerX : number = 100; // Player's horizontal position.
     let playerY : number = 100; // Player's vertical position(starting on the floor).
     let velocityY : number = 0; // Player's vertical velocity for jumping and falling.
@@ -17,24 +19,55 @@
 
     // Keyboard event listeners.
     function onKeyDown(event: KeyboardEvent) {
-        // console.log(event);
+        console.log(event);
         if (event.key === "ArrowLeft") {
-            console.log("arrow left")
+            leftKeyPressed = true;
+            updatePlayer();
         } else if (event.key === "ArrowRight") {
-            console.log("arrow right")
-        } else if (event.key === "ArrowUp") {
-            console.log("arrow up")
+            rightKeyPressed = true;
+            updatePlayer();
+        } else if (event.key === " ") {
+            console.log("spacebar pressed.")
+        }
+    }
+
+    function onKeyUp(event: KeyboardEvent) {
+        if (event.key === "ArrowLeft") {
+            leftKeyPressed = false;
+            updatePlayer();
+        } else if (event.key === "ArrowRight") {
+            rightKeyPressed = false;
+            updatePlayer();
+        } else if (event.key === " ") {
+            console.log("spacebar released.")
         }
     }
 
     // Movement loop & logic.
     function updatePlayer() {
+        if ( leftKeyPressed ) {
+            playerX -= speed;
+            console.log(speed);
+        } else if ( rightKeyPressed ) {
+            playerX += speed;
+            console.log(speed);
+        }
 
+        // requestAnimationFrame(updatePlayer); // Continue the loop.
     }
+
+    onMount(() => {
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+        updatePlayer();
+    });
+
+
+
 </script>
 
 
-<div class="player"></div>
+<div class="player" style={`transform: translateX(${playerX}px) translateY(${playerY}px)`}></div>
 <svelte:window on:keydown|preventDefault={onKeyDown} />
 
 <style>
@@ -43,6 +76,5 @@
         width: 100px;
         height: 100px;
         background-color: red;
-        transform: translate();
     }
 </style>
